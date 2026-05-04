@@ -2,9 +2,7 @@
 -- Proyecto no.2 Arturo Lima - 24683
 -- =========================================================
 
--- =========================================================
--- DDL - Creacion de tablas
--- =========================================================
+-- DDL Creacion de las 7 tablas
 
 CREATE TABLE cliente (
     id_cliente INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -74,30 +72,26 @@ CREATE TABLE detalle_compra (
     FOREIGN KEY (id_producto) REFERENCES producto(id_producto)
 );
 
--- =========================================================
 -- INDICES
--- =========================================================
 
--- Acelera filtros y reportes de ventas por rango de fecha
+-- Indices en compra mediante fecha de emision de la compra
 CREATE INDEX idx_compra_fecha ON compra(fecha);
 
--- Analisis de rotacion de inventario por categoria,
+-- Indice en producto mediante categoria 
 CREATE INDEX idx_producto_categoria ON producto(id_categoria);
 
--- Deteccion de patrones de consumo de los clientes
+-- Indice en compra mediante cliente que realizan dichas compras
 CREATE INDEX idx_compra_cliente ON compra(id_cliente);
 
--- Agiliza reportes de desempeno por empleado
+-- Indice en compra mediante empleado que atendio dichas compras 
 CREATE INDEX idx_compra_empleado ON compra(id_empleado);
 
--- Analisis de stock disponibles; funcional para un sistema de alerta de stock bajo
+-- Indice en producto mediante la cantidad de stock disponible en dicho producto
 CREATE INDEX idx_producto_stock ON producto(stock);
 
--- =========================================================
 -- VISTAS
--- =========================================================
 
--- Vista 1: Auditoria completa de ventas
+-- Auditoria completa de ventas
 CREATE VIEW vista_auditoria_completa_ventas AS
 SELECT
     com.id_compra,
@@ -113,7 +107,7 @@ FROM compra com
 JOIN cliente  cli ON com.id_cliente  = cli.id_cliente
 JOIN empleado e  ON com.id_empleado = e.id_empleado;
 
--- Vista 2: Rotacion y rentabilidad de productos
+-- Rotacion y rentabilidad de productos
 CREATE VIEW vista_rentabilidad_productos AS
 SELECT
     pro.id_producto,
@@ -129,7 +123,7 @@ WHERE pro.activo = TRUE
 GROUP BY pro.id_producto, pro.nombre, cat.nombre 
 HAVING SUM(detcom.cantidad) > 0;
 
--- Vista 3: Control de stock
+-- Control de stock
 CREATE VIEW vista_stock_critico AS
 SELECT
     pro.id_producto,
@@ -145,7 +139,7 @@ JOIN proveedor prov  ON pro.id_proveedor = prov.id_proveedor
 WHERE pro.stock < 20
 ORDER BY pro.stock ASC;
 
--- Vista 4: Desempeno de empleados por ventas
+-- Desempeno de empleados por ventas
 CREATE VIEW vista_desempeno_empleados AS
 SELECT
     emp.id_empleado,
@@ -161,11 +155,9 @@ WHERE emp.activo = TRUE
 GROUP BY emp.id_empleado, emp.nombre
 HAVING SUM(com.total) > 0;
 
--- =========================================================
 -- DATOS DE PRUEBA
--- =========================================================
 
--- CLIENTE (25 registros)
+-- CLIENTE 
 INSERT INTO cliente (nombre, telefono, correo) VALUES
 ('Mario Barrientos',   '5555-4321', 'Mar2687@uvg.edu.gt'),
 ('Ana Morales',        '5555-1111', 'ana.morales@gmail.com'),
@@ -193,7 +185,7 @@ INSERT INTO cliente (nombre, telefono, correo) VALUES
 ('Daniela Cano',       '5544-1014', 'daniela.cano@gmail.com'),
 ('Tomás Velásquez',    '5544-1015', 'tomas.velasquez@gmail.com');
 
--- EMPLEADO (25 registros)
+-- EMPLEADO 
 INSERT INTO empleado (nombre, telefono, correo) VALUES
 ('Luis Fonsi',         '5555-5678', 'luis.fonsi@tienda.com'),
 ('Andrea Soto',        '5555-1010', 'andrea.soto@tienda.com'),
@@ -221,7 +213,7 @@ INSERT INTO empleado (nombre, telefono, correo) VALUES
 ('Beatriz Guzmán',     '5544-2014', 'beatriz.guzman@tienda.com'),
 ('Rodrigo Salinas',    '5544-2015', 'rodrigo.salinas@tienda.com');
 
--- CATEGORIA (7 registros)
+-- CATEGORIA 
 INSERT INTO categoria (nombre) VALUES
 ('Lácteos y Derivados'),
 ('Carnes y Embutidos'),
@@ -231,7 +223,7 @@ INSERT INTO categoria (nombre) VALUES
 ('Abarrotes y Conservas'),
 ('Hogar y Limpieza');
 
--- PROVEEDOR (10 registros)
+-- PROVEEDOR 
 INSERT INTO proveedor (nombre, telefono, correo) VALUES
 ('Lácteos del Norte S.A.',       '5566-1001', 'ventas@lacteosdn.com'),
 ('Carnes Premium Ltda.',         '5566-1002', 'pedidos@carnespremium.com'),
@@ -244,7 +236,7 @@ INSERT INTO proveedor (nombre, telefono, correo) VALUES
 ('Importadora Alimentaria S.A.', '5566-1009', 'importa@alimentaria.com'),
 ('Agropecuaria Nacional',        '5566-1010', 'ventas@agronacional.com');
 
--- PRODUCTO (25 registros)
+-- PRODUCTO 
 INSERT INTO producto (nombre, descripcion, precio_actual, fecha_vencimiento, imagen, stock, id_categoria, id_proveedor) VALUES
 ('Leche entera 1L',         'Leche de vaca pasteurizada',                 35.00, '2026-05-15', '/img/leche_entera.jpg',  120, 1, 1),
 ('Queso fresco 500g',       'Queso blanco fresco empacado al vacío',      28.00, '2026-05-08', '/img/queso_fresco.jpg',   60, 1, 1),
@@ -272,7 +264,7 @@ INSERT INTO producto (nombre, descripcion, precio_actual, fecha_vencimiento, ima
 ('Detergente líquido 1L',   'Detergente multiusos para ropa',             28.00, '2027-06-01', '/img/detergente.jpg',      45, 7, 7),
 ('Lámpara LED escritorio',  'Lámpara LED ajustable con luz cálida',       85.00,  NULL,        '/img/lampara.jpg',         15, 7, 8);
 
--- COMPRA (10 registros)
+-- COMPRA 
 INSERT INTO compra (fecha, total, metodo_pago, estado, num_factura, id_cliente, id_empleado) VALUES
 ('2026-04-23',  53.00, 'tarjeta',       'completado', '12345',  1,  1),
 ('2026-04-23',  28.00, 'efectivo',      'completado', '12346',  2,  3),
@@ -285,7 +277,7 @@ INSERT INTO compra (fecha, total, metodo_pago, estado, num_factura, id_cliente, 
 ('2026-04-27',   0.00, 'efectivo',      'cancelado',  '12353',  9,  9),
 ('2026-04-27',   0.00, 'transferencia', 'cancelado',  '12354', 10, 10);
 
--- DETALLE_COMPRA (14 registros)
+-- DETALLE_COMPRA 
 INSERT INTO detalle_compra (id_compra, id_producto, cantidad, precio_unitario, sub_total) VALUES
 (1,  1, 1, 35.00, 35.00),  
 (1, 15, 2,  9.00, 18.00),  
