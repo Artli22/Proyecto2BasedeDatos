@@ -112,6 +112,7 @@ Debe retornar un JSON con la lista de productos.
 ---
 
 ## Estructura del proyecto
+```
 Proyecto2BasedeDatos/
 ├── docker-compose.yml                    # Orquestación de servicios
 ├── .env.example                          # Variables de entorno (ejemplo)
