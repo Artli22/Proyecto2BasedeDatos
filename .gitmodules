@@ -1,7 +1,7 @@
 [submodule "Proyecto2BasedeDatos-Frontend"]
 	path = Proyecto2BasedeDatos-Frontend
-	url = git@github.com:Artli22/Proyecto2BasedeDatos-Frontend.git
+	url = https://github.com/Artli22/Proyecto2BasedeDatos-Frontend.git
 [submodule "Proyecto2BasedeDatos-Backend"]
 	path = Proyecto2BasedeDatos-Backend
-	url = git@github.com:Artli22/Proyecto2BasedeDatos-Backend.git
+	url = https://github.com/Artli22/Proyecto2BasedeDatos-Backend.git
 
