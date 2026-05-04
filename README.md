@@ -32,12 +32,14 @@ siguientes funcionalidades:
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/Artli22/Proyecto2BasedeDatos
+git clone --recurse-submodules https://github.com/Artli22/Proyecto2BasedeDatos
 cd Proyecto2BasedeDatos
 ```
-
-> El frontend y el backend están incluidos como submódulos de Git para facilitar
-> el proceso de clonación.
+Si se clono de forma normal entonces se debe utilizar los siguientes comandos 
+```bash
+git clone https://github.com/Artli22/Proyecto2BasedeDatos
+git submodule update --init --recursive
+```
 
 ### 2. Configurar variables de entorno
 
