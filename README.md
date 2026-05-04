@@ -145,7 +145,7 @@ Proyecto2BasedeDatos/
 ├── package.json
 ├── vite.config.js
 └── Dockerfile
-
+```
 ---
 
 ## Características principales
