@@ -481,3 +481,42 @@ TO rol_backend;
 GRANT SELECT
 ON vista_auditoria_completa_ventas, vista_rentabilidad_productos, vista_stock_critico, vista_desempeno_empleados
 TO rol_backend;
+
+-- ============================================================
+-- USUARIOS DE PRUEBA
+-- ============================================================
+
+-- ADMINISTRADORES
+CREATE USER administrador1 WITH PASSWORD 'admin1';
+GRANT rol_administrador TO administrador1;
+
+CREATE USER administrador2 WITH PASSWORD 'admin2';
+GRANT rol_administrador TO administrador2;
+
+-- GERENTES
+CREATE USER gerente1 WITH PASSWORD 'gerente1';
+GRANT rol_gerente TO gerente1;
+
+CREATE USER gerente2 WITH PASSWORD 'gerente2';
+GRANT rol_gerente TO gerente2;
+
+-- VENDEDORES
+CREATE USER vendedor1 WITH PASSWORD 'vendedor1';
+GRANT rol_vendedor TO vendedor1;
+
+CREATE USER vendedor2 WITH PASSWORD 'vendedor2';
+GRANT rol_vendedor TO vendedor2;
+
+-- RECURSOS HUMANOS
+CREATE USER recursoh1 WITH PASSWORD 'recursoh1';
+GRANT rol_recursoHumano TO recursoh1;
+
+CREATE USER recursoh2 WITH PASSWORD 'recursoh2';
+GRANT rol_recursoHumano TO recursoh2;
+
+-- AUDITORES
+CREATE USER auditor1 WITH PASSWORD 'auditor1';
+GRANT rol_auditor TO auditor1;
+
+CREATE USER auditor2 WITH PASSWORD 'auditor2';
+GRANT rol_auditor TO auditor2;
