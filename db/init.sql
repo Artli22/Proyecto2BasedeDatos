@@ -293,3 +293,191 @@ INSERT INTO detalle_compra (id_compra, id_producto, cantidad, precio_unitario, s
 (6, 16, 1, 24.00, 24.00),  
 (7, 24, 1, 28.00, 28.00),  
 (7, 19, 3,  6.00, 18.00);
+
+
+--============================================================
+-- ROLES Y PERMISOS - BASED ON PERMISSION MATRIX
+--============================================================ 
+
+-- ============================================================
+-- CREAR ROLES DE GRUPO (sin login, serán asignados a usuarios)
+-- ============================================================ 
+
+CREATE ROLE rol_administrador NOLOGIN;
+CREATE ROLE rol_gerente       NOLOGIN;
+CREATE ROLE rol_vendedor      NOLOGIN;
+CREATE ROLE rol_recursoHumano NOLOGIN;
+CREATE ROLE rol_auditor       NOLOGIN;
+CREATE ROLE rol_backend       NOLOGIN;
+
+
+-- ============================================================
+--  ROL: Administrador
+-- ============================================================ 
+GRANT USAGE ON SCHEMA public TO rol_administrador;
+
+-- Acceso CRUD a todas las tablas
+GRANT SELECT, INSERT, UPDATE, DELETE
+ON cliente, empleado, producto, compra
+TO rol_administrador;
+
+-- Acceso de lectura a todas las tablas de catalogo 
+GRANT SELECT
+ON categoria, proveedor, detalle_compra
+TO rol_administrador;
+
+-- Acceso a todos los reportes (vistas)
+GRANT SELECT
+ON vista_auditoria_completa_ventas,
+   vista_rentabilidad_productos,
+   vista_stock_critico,
+   vista_desempeno_empleados
+TO rol_administrador;
+
+-- Permisos en toda secuencia
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public
+TO rol_administrador;
+
+-- ============================================================
+--  ROL: Gerente
+-- ============================================================ 
+GRANT USAGE ON SCHEMA public TO rol_gerente;
+
+-- Acceso de lectura en las tablas 
+GRANT SELECT ON cliente, empleado, categoria, proveedor, detalle_compra
+TO rol_gerente;
+
+-- Acceso de lectura en producto, limitado las columnas que puede modificar 
+GRANT SELECT ON producto TO rol_gerente;
+GRANT UPDATE (precio_actual, activo, stock) ON producto TO rol_gerente;
+
+-- Acceso a lectura en compra, limitado las columnas que puede modificar
+GRANT SELECT ON compra TO rol_gerente;
+GRANT UPDATE (estado, metodo_pago) ON compra TO rol_gerente;
+
+-- Acceso a todas las vistas 
+GRANT SELECT
+ON vista_auditoria_completa_ventas, vista_rentabilidad_productos, vista_stock_critico, vista_desempeno_empleados
+TO rol_gerente;
+
+-- Restricciones para insertar 
+REVOKE INSERT, 
+DELETE ON cliente, empleado, producto, compra 
+FROM rol_gerente;
+
+-- ============================================================
+--  ROL: Vendedor 
+-- ============================================================
+GRANT USAGE ON SCHEMA public TO rol_vendedor;
+
+-- Acceso de lectura a ciertas columnas de cliente
+GRANT SELECT (id_cliente, nombre, activo)
+ON cliente TO rol_vendedor;
+
+-- Acceso de lectura a ciertas columnas de producto
+GRANT SELECT (id_producto, nombre, descripcion, precio_actual, stock, activo, id_categoria)
+ON producto TO rol_vendedor;
+
+-- Acceso de lectura en las tablas categoria, detalle_compra y compra
+GRANT SELECT 
+ON categoria, detalle_compra, compra 
+TO rol_vendedor;
+
+-- Acceso a crear instancias en compra
+GRANT INSERT 
+ON compra 
+TO rol_vendedor;
+
+
+-- Acceso a vista de stock critico 
+GRANT SELECT ON vista_stock_critico TO rol_vendedor;
+
+-- Acceso a utilizar id autogenerado en compra
+GRANT USAGE, SELECT 
+ON SEQUENCE compra_id_compra_seq
+TO rol_vendedor;
+
+-- Restriccion para las tablas
+REVOKE ALL 
+ON empleado, proveedor 
+FROM rol_vendedor;
+
+-- Restriccion para las vistas
+REVOKE ALL 
+ON vista_auditoria_completa_ventas, vista_rentabilidad_productos, vista_desempeno_empleados 
+FROM rol_vendedor;
+
+-- ============================================================
+--  ROL: Recursos Humanos
+-- ============================================================
+GRANT USAGE ON SCHEMA public TO rol_recursoHumano;
+
+-- Acceso CRUD a la tabla empleado
+GRANT SELECT, INSERT, UPDATE, DELETE
+ON empleado
+TO rol_recursoHumano;
+
+-- Acceso para usar el id autogenerado en empleado
+GRANT USAGE, SELECT ON SEQUENCE empleado_id_empleado_seq
+TO rol_recursoHumano;
+
+-- Acceso al reporte de desempeno de empleados
+GRANT SELECT 
+ON vista_desempeno_empleados 
+TO rol_recursoHumano;
+
+-- Restriccion para las tablas: mientras menos sabe RRHH, mejor :)
+REVOKE ALL 
+ON cliente, producto, compra, categoria, proveedor, detalle_compra
+FROM rol_recursoHumano;
+
+-- Restriccion para las vistas
+REVOKE ALL 
+ON vista_auditoria_completa_ventas, vista_rentabilidad_productos, vista_stock_critico
+FROM rol_recursoHumano;
+
+-- ============================================================
+--  ROL: Auditor 
+-- ============================================================
+GRANT USAGE ON SCHEMA public TO rol_auditor;
+
+-- Lectura completa en todas las tablas
+GRANT SELECT
+ON cliente, empleado, producto, compra, categoria, proveedor, detalle_compra
+TO rol_auditor;
+
+-- Lectura completa en todas las vistas
+GRANT SELECT
+ON vista_auditoria_completa_ventas, vista_rentabilidad_productos, vista_stock_critico, vista_desempeno_empleados
+TO rol_auditor;
+
+
+
+
+-- ============================================================
+-- ROL: BACKEND (API Go)
+-- ============================================================
+
+GRANT USAGE ON SCHEMA public TO rol_backend;
+
+-- Acceso CRUD en tablas principales de negocio
+GRANT SELECT, INSERT, UPDATE ON cliente, empleado, producto, compra
+TO rol_backend;
+
+-- Acceso a Detalle_compra: INSERT + SELECT 
+GRANT SELECT, INSERT, UPDATE ON detalle_compra
+TO rol_backend;
+
+-- Acceso a catálogos 
+GRANT SELECT ON categoria, proveedor
+TO rol_backend;
+
+-- Acceso al id autoincrementable en las tablas principales
+GRANT USAGE, SELECT
+ON SEQUENCE cliente_id_cliente_seq, empleado_id_empleado_seq, producto_id_producto_seq, compra_id_compra_seq, detalle_compra_id_detalle_seq
+TO rol_backend;
+
+-- Acceso a las vistas 
+GRANT SELECT
+ON vista_auditoria_completa_ventas, vista_rentabilidad_productos, vista_stock_critico, vista_desempeno_empleados
+TO rol_backend;
