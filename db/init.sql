@@ -474,7 +474,7 @@ TO rol_backend;
 
 -- Acceso al id autoincrementable en las tablas principales
 GRANT USAGE, SELECT
-ON SEQUENCE cliente_id_cliente_seq, empleado_id_empleado_seq, producto_id_producto_seq, compra_id_compra_seq, detalle_compra_id_detalle_seq
+ON SEQUENCE cliente_id_cliente_seq, empleado_id_empleado_seq, producto_id_producto_seq, compra_id_compra_seq
 TO rol_backend;
 
 -- Acceso a las vistas 
@@ -519,4 +519,5 @@ CREATE USER auditor1 WITH PASSWORD 'auditor1';
 GRANT rol_auditor TO auditor1;
 
 CREATE USER auditor2 WITH PASSWORD 'auditor2';
+GRANT rol_auditor TO auditor2;
 GRANT rol_auditor TO auditor2;
